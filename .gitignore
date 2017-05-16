@@ -11,6 +11,8 @@ $RECYCLE.BIN/
 __pycache__
 texts
 processed
+.gitignore
+.gitattributes
 
 # Windows Installer files
 *.cab
