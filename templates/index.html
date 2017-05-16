@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=EB+Garamond|Roboto&amp;subset=cyrillic" rel="stylesheet">
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script type="text/javascript" src='static/script.js'></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" href="static/styles.css">
+	<link rel="shortcut icon" href="static/logo.jpg" type="image/x-icon">
+    <title>Дискурсивные формулы</title>
+</head>
+<body>
+<div id="main_content">
+<h1>Автоматическое определение дискурсивных формул</h1>
+<hr>
+<div id="comment">
+<div class="line">Приложение автоматически выделяет дискурсивные формулы из загруженного текста.</div>
+<div class="line">Обработка текста может занять до нескольких минут.</div>
+<div class="line">Рекомендуемые браузеры: Google Chrome, Opera.</div></div>
+<form method='POST' name="fileform" enctype="multipart/form-data" onsubmit="return validate()">
+<div class="question">Загрузите текст в формате txt: </div>
+<div id="inputs">
+<input type='file' name="file"></input></br>
+<input type="checkbox" name="speakers" checked>Удалить обозначения говорящих</input></br>
+<button type='submit' id="send">Загрузить</button></br>
+<div id="notice"></div>
+</div>
+</form>
+</div>
+</body>
+</html>
