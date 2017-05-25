@@ -1,10 +1,11 @@
 import re
 from collections import deque, OrderedDict
+import html
 
 def PREP_delete_speakers (text,repl = ''):
-    new_text = re.sub('\n[\t ]*[А-ЯЁ ]+?(?: ?\(.+?\))?[.:]', '\n'+repl, text)
+    new_text = re.sub('\n[\t ]*[А-ЯЁ ]+?(?: ?\(.+?\))? ?[.:]', '\n'+repl, text)
     if len(new_text) > len(text) - 500:
-        new_text = re.sub('\n[\t ]*[А-яЁё]+?(?: ?\(.+?\))?[.:]','\n'+repl,text)
+        new_text = re.sub('\n[\t ]*[А-яЁё]+?(?: ?\(.+?\))? ?[.:]','\n'+repl,text)
     return new_text
 
 
@@ -18,26 +19,28 @@ def table_for_app(table,text,speakers):
     etiquette = get_etiquette()
     formula_table = open('formula_list.csv','w',encoding='utf-8-sig')
     formula_table.write(';'.join(['document','left context','formula','','','unique','count'])+'\n')
-    contexts(text,table,formula_table,etiquette,speakers)
+    contexts(text,table,formula_table,etiquette,speakers,deque(),False)
     formula_table.close()
 
     
-def go_through_texts(table,speakers,new):
+def go_through_texts(table,speakers,process,new):
     textlist = list(OrderedDict.fromkeys([x[0] for x in table]))
-    print(textlist)
     etiquette = get_etiquette()
-    formula_table = open(new+'formula_list.csv','w',encoding='utf-8-sig')
+    formula_table = open('formula_list.csv','w',encoding='utf-8-sig')
     formula_table.write(';'.join(['document','left context','formula','','','unique','count'])+'\n')
+    unique_deque = deque()
     for file in textlist:
         try:
             text = open('./texts/'+file+'.txt','r',encoding='cp1251').read()
         except:
             text = open('./texts/'+file+'.txt','r',encoding='utf-8-sig').read()
+        text = html.unescape(text)
         new_table = table_for_text(table,file)
-        annotated_text = contexts(text,new_table,formula_table,etiquette,speakers)
-        annotated_textfile = open(new+file+'_annotated.txt','w',encoding='utf-8-sig')
-        annotated_textfile.write(annotated_text)
-        annotated_textfile.close()        
+        annotated_text,unique_deque = contexts(text,new_table,formula_table,etiquette,speakers,unique_deque,process)
+        if process:
+            annotated_textfile = open(new+file+'_annotated.txt','w',encoding='utf-8-sig')
+            annotated_textfile.write(annotated_text)
+            annotated_textfile.close()        
     formula_table.close()
 
 
@@ -75,8 +78,7 @@ def del_conj(string):
     return string
 
 
-def contexts(text,table,formula_table,etiquette,speakers):
-    unique_deque = deque()
+def contexts(text,table,formula_table,etiquette,speakers,unique_deque,process):
     text = text.replace(';',',')
     if speakers:
         text = PREP_delete_speakers(text,'\t')
@@ -109,7 +111,10 @@ def contexts(text,table,formula_table,etiquette,speakers):
                     cl_context = phrase.group()
                     context_only = phrase.group(1)
                     formula_only = phrase.group(2)
-                    annotated_text = annotated_text.replace(context_only+formula_only,context_only+'{{'+formula_only+'}}')
+                    if formula_only.endswith('\n') and process:
+                        annotated_text = annotated_text.replace(context_only+formula_only,context_only+'{{'+formula_only.strip()+'}}'+'\n')
+                    elif process:
+                        annotated_text = annotated_text.replace(context_only+formula_only,context_only+'{{'+formula_only+'}}')
                     context_re = re.search('[.…!?]{1,3} ?[–—»)]?\s*?((?:[«(А-яЁёA-z0-9][^.…!?]*?[.…!?]{1,3}[»)]?\s*?){2}[^.…!?]*?'+re.escape(cl_context)+')',text)
                     if context_re is not None:
                         context = context_re.group(1)
@@ -119,5 +124,5 @@ def contexts(text,table,formula_table,etiquette,speakers):
                     context = context[:(len(context)-(len(row[1])+1))]
             formula_table.write(';'.join([row[0],context,row[1],'','',unique[0],str(unique[1])])+'\n')
 
-    return annotated_text
+    return annotated_text,unique_deque
 

@@ -1,10 +1,12 @@
 from scripts.feature_extraction import *
 import re
+import html
 
 def get_data(rawtext,filename,delete_speakers):
     data = [['Text_id', 'Text', 'Len', 'Subject', 'Object',  'Predicate', 'Emotions',  'Imperative', 'Question',
              'First', 'NOUN', 'ADJF', 'ADJS', 'COMP', 'VERB', 'INFN', 'PRTF', 'PRTS', 'GRND', 'NUMR', 'ADVB', 'NPRO', 'PRED', 'PREP', 'CONJ', 'PRCL', 'INTJ']]
-             
+    
+    rawtext = html.unescape(rawtext)
     if delete_speakers:
         rawtext = PREP_delete_speakers(rawtext)
     linedtext = TextByLines(rawtext)

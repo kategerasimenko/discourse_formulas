@@ -52,10 +52,10 @@ def joinarrays(a1, a2):
 
     
 def PREP_delete_speakers (text):
-    new_text = re.sub('\n[ \t]*[А-ЯЁ ]+?(?: ?\(.+?\))?[.:]', '\n', text)
+    new_text = re.sub('\n[ \t]*[А-ЯЁ ]+?(?: ?\(.+?\))? ?[.:]', '\n', text)
     if len(new_text) > len(text) - 500:
         print('speakers not in uppercase')
-        new_text = re.sub('\n[ \t]*[А-яЁё]+?(?: ?\(.+?\))?[.:]','\n',text)
+        new_text = re.sub('\n[ \t]*[А-яЁё]+?(?: ?\(.+?\))? ?[.:]','\n',text)
     return new_text
 
     

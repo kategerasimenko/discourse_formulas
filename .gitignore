@@ -13,6 +13,7 @@ texts
 processed
 .gitignore
 .gitattributes
+formula_list.csv
 
 # Windows Installer files
 *.cab
