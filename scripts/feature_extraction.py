@@ -52,10 +52,10 @@ def joinarrays(a1, a2):
 
     
 def PREP_delete_speakers (text):
-    new_text = re.sub('\n[ \t]*[А-ЯЁ ]+?(?: ?\(.+?\))? ?[.:]', '\n', text)
+    new_text = re.sub('\n *[А-ЯЁ ]+?(?: ?\(.+?\))? ?[.:]', '\n', text)
     if len(new_text) > len(text) - 500:
         print('speakers not in uppercase')
-        new_text = re.sub('\n[ \t]*[А-яЁё]+?(?: ?\(.+?\))? ?[.:]','\n',text)
+        new_text = re.sub('\n *[А-яЁё]+?(?: ?\(.+?\))? ?[.:]','\n',text)
     return new_text
 
     
@@ -174,7 +174,7 @@ class Pseudoclause():
         #выявление и обработка предиката
         levelcounter = 50
         for i in self.text.split():
-            curword = i.strip(',.?-!:;()"')
+            curword = i.strip(',.?-!:;()"«»“”')
             self.words.append(curword.lower())
             verblikeness = isverb(curword)
             if verblikeness[0] == True and verblikeness[1] < levelcounter:

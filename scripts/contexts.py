@@ -3,9 +3,9 @@ from collections import deque, OrderedDict
 import html
 
 def PREP_delete_speakers (text,repl = ''):
-    new_text = re.sub('\n[\t ]*[А-ЯЁ ]+?(?: ?\(.+?\))? ?[.:]', '\n'+repl, text)
+    new_text = re.sub('\n *[А-ЯЁ ]+?(?: ?\(.+?\))? ?[.:]', '\n'+repl, text)
     if len(new_text) > len(text) - 500:
-        new_text = re.sub('\n[\t ]*[А-яЁё]+?(?: ?\(.+?\))? ?[.:]','\n'+repl,text)
+        new_text = re.sub('\n *[А-яЁё]+?(?: ?\(.+?\))? ?[.:]','\n'+repl,text)
     return new_text
 
 
@@ -60,7 +60,7 @@ def regstr_splitters():
     regstr = '(?:'
     one_symbols = '['
     splitters = ['\.',',','\?','!',' -','\:',';',' ?или',' ?и','\}','\{',
-                 ' -- ', '\(','\)', '\n+','…','"','—','–','»','«','[0-9]+','[A-z]+']
+                 ' -- ', '\(','\)', '\n+','…','"','—','–','»','«','“','”','[0-9]+','[A-z]+']
     for spl in splitters:
         if len(spl) == 1 or ('\\' in spl and len(spl) == 2) :
             one_symbols += spl[-1]
@@ -115,7 +115,7 @@ def contexts(text,table,formula_table,etiquette,speakers,unique_deque,process):
                         annotated_text = annotated_text.replace(context_only+formula_only,context_only+'{{'+formula_only.strip()+'}}'+'\n')
                     elif process:
                         annotated_text = annotated_text.replace(context_only+formula_only,context_only+'{{'+formula_only+'}}')
-                    context_re = re.search('[.…!?]{1,3} ?[–—»)]?\s*?((?:[«(А-яЁёA-z0-9][^.…!?]*?[.…!?]{1,3}[»)]?\s*?){2}[^.…!?]*?'+re.escape(cl_context)+')',text)
+                    context_re = re.search('[.…!?]{1,3} ?[–—»)”]?\s*?((?:[«“(А-яЁёA-z0-9][^.…!?]*?[.…!?]{1,3}[»)”]?\s*?){2}[^.…!?]*?'+re.escape(cl_context)+')',text)
                     if context_re is not None:
                         context = context_re.group(1)
                     else:
