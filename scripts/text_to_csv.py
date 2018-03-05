@@ -7,6 +7,7 @@ def get_data(rawtext,filename,delete_speakers):
              'First', 'NOUN', 'ADJF', 'ADJS', 'COMP', 'VERB', 'INFN', 'PRTF', 'PRTS', 'GRND', 'NUMR', 'ADVB', 'NPRO', 'PRED', 'PREP', 'CONJ', 'PRCL', 'INTJ']]
     
     rawtext = html.unescape(rawtext)
+    rawtext = rawtext.replace('¬','')
     if delete_speakers:
         rawtext = PREP_delete_speakers(rawtext)
     linedtext = TextByLines(rawtext)
