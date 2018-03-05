@@ -2,16 +2,15 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix, hstack, vstack
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import RidgeClassifier
 from sklearn.svm import LinearSVC
 from collections import Counter
 import pickle
 
 def get_formulas(table):
-    tfidf = pickle.load(open('./scripts/tfidf.pickle','rb'))
-    tfidf_char = pickle.load(open('./scripts/tfidf_char.pickle','rb'))
-    kmeans = pickle.load(open('./scripts/kmeans.pickle','rb'))
+    count = pickle.load(open('./scripts/count.pickle','rb'))
+    count_char = pickle.load(open('./scripts/count_char.pickle','rb'))
     forest = pickle.load(open('./scripts/forest.pickle','rb'))
     ridge = pickle.load(open('./scripts/ridge.pickle','rb'))
     logit = pickle.load(open('./scripts/logit.pickle','rb'))
@@ -20,22 +19,16 @@ def get_formulas(table):
     headers = table.pop(0)
     data = pd.DataFrame(table,columns=headers)
 
-    tfidf_text = tfidf.transform(data['Text'])
-    tfidf_char_text = tfidf_char.transform(data['Text'])
+    count_text = count.transform(data['Text'])
+    count_char_text = count_char.transform(data['Text'])
     X_data = data.drop(['Text','Text_id'],axis=1)
     data_sparse = csr_matrix(X_data)
-    data_tfidf = hstack((tfidf_text,tfidf_char_text,data_sparse))
+    data_count = hstack((count_text,count_char_text,data_sparse))
 
-    clusters = kmeans.predict(data_tfidf)
-    true_clusters = [0 if x else 1 for x in clusters]
-
-    cluster_sparse = csr_matrix(clusters.reshape(-1, 1))
-    clust_tfidf = hstack((data_tfidf, cluster_sparse))
-
-    f_pred = forest.predict(clust_tfidf)
-    l_pred = logit.predict(clust_tfidf)
-    svc_pred = svc.predict(clust_tfidf)
-    r_pred = ridge.predict(clust_tfidf)
+    f_pred = forest.predict(data_count)
+    l_pred = logit.predict(data_count)
+    svc_pred = svc.predict(data_count)
+    r_pred = ridge.predict(data_count)
 
     for i in range(len(f_pred)):
         if data['First'][i] == 0:
@@ -44,9 +37,8 @@ def get_formulas(table):
             svc_pred[i] = 0
             r_pred[i] = 0
 
-    cv_cum = np.array([int(round((f_pred[i]*0.2 + r_pred[i]*0.2 +
-                         true_clusters[i]*0.2 + svc_pred[i]*0.2 +
-                         l_pred[i]*0.2))) for i in range(len(f_pred))])
+    cv_cum = np.array([int(round((f_pred[i]*0.25 + r_pred[i]*0.25 + svc_pred[i]*0.25 +
+                         l_pred[i]*0.25))) for i in range(len(f_pred))])
     
     all_formulas = data[cv_cum == 1]['Text']
     unique_formulas = Counter(all_formulas).most_common()

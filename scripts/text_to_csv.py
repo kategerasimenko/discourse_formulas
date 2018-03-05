@@ -15,7 +15,7 @@ def get_data(rawtext,filename,delete_speakers):
     disc_target = []
 
     for j in linedtext.lines:
-        curlinesplitted = splitbylist(j, ['.',',','?','!',' - ',':',';',' или ',' и ','(',')', '\n','…','"','—',' – ','»'])
+        curlinesplitted = splitbylist(j, ['.',',','?','!',' - ',':',';',' или ',' и ','(',')', '\n','…','"','—',' – ','»','”'])
         firstalreadybeen = False
         firstthree = 1
         for i in curlinesplitted:
@@ -29,7 +29,7 @@ def get_data(rawtext,filename,delete_speakers):
                 firstthree += 1
 
     for n in range(len(allpseudoclauses)):
-        new_words = allpseudoclauses[n].text.strip('.,?!-:;()…"—–«»{}').strip()
+        new_words = allpseudoclauses[n].text.strip('.,?!-:;()…"—–{}«»“”/\\').strip()
         row = [filename[:-4], new_words, len(new_words.split())]
 
         if len(allpseudoclauses[n].subject) > 0:
