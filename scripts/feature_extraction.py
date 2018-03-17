@@ -174,7 +174,7 @@ class Pseudoclause():
         #выявление и обработка предиката
         levelcounter = 50
         for i in self.text.split():
-            curword = i.strip(',.?-!:;()"«»“”')
+            curword = i.strip(',.?-!:;()"«»“”\\/')
             self.words.append(curword.lower())
             verblikeness = isverb(curword)
             if verblikeness[0] == True and verblikeness[1] < levelcounter:
