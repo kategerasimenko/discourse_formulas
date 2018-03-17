@@ -99,7 +99,7 @@ def contexts(text,table,formula_table,etiquette,speakers,unique_deque,process):
             else:
                 if n == 1:
                     re_cl_context = '('+regstr(table[n-1][1])+' ?'+spl+'{1,3}\\s*?'+\
-                                    spl+'{0,3} ?)('+row[1]+' ?'+spl+')'
+                                    spl+'{0,3} ?)('+regstr(row[1])+' ?'+spl+')'
                 else:
                     re_cl_context = '('+regstr(table[n-2][1])+' ?'+spl+'{1,3}\\s*?'+\
                                     spl+'{0,3} ?'+regstr(table[n-1][1])+' ?'+spl+'{1,3}\\s*?'+\
